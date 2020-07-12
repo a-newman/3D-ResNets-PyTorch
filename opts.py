@@ -3,6 +3,13 @@ from pathlib import Path
 
 
 def parse_opts():
+    parser = get_parser()
+    args = parser.parse_args()
+
+    return args
+
+
+def get_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('--root_path',
                         default=None,
@@ -73,10 +80,11 @@ def parse_opts():
                         default=0.25,
                         type=float,
                         help='Min scale for random cropping in training')
-    parser.add_argument('--train_crop_min_ratio',
-                        default=0.75,
-                        type=float,
-                        help='Min aspect ratio for random cropping in training')
+    parser.add_argument(
+        '--train_crop_min_ratio',
+        default=0.75,
+        type=float,
+        help='Min aspect ratio for random cropping in training')
     parser.add_argument('--no_hflip',
                         action='store_true',
                         help='If true holizontal flipping is not performed.')
@@ -89,11 +97,12 @@ def parse_opts():
                         help=('Temporal cropping method in training. '
                               'random is uniform. '
                               '(random | center)'))
-    parser.add_argument('--learning_rate',
-                        default=0.1,
-                        type=float,
-                        help=('Initial learning rate'
-                              '(divided by 10 while training by lr scheduler)'))
+    parser.add_argument(
+        '--learning_rate',
+        default=0.1,
+        type=float,
+        help=('Initial learning rate'
+              '(divided by 10 while training by lr scheduler)'))
     parser.add_argument('--momentum', default=0.9, type=float, help='Momentum')
     parser.add_argument('--dampening',
                         default=0.0,
@@ -219,7 +228,8 @@ def parse_opts():
         default='resnet',
         type=str,
         help=
-        '(resnet | resnet2p1d | preresnet | wideresnet | resnext | densenet | ')
+        '(resnet | resnet2p1d | preresnet | wideresnet | resnext | densenet | '
+    )
     parser.add_argument('--model_depth',
                         default=18,
                         type=int,
@@ -232,9 +242,10 @@ def parse_opts():
                         default=1,
                         type=int,
                         help='Stride in t dim of conv1.')
-    parser.add_argument('--no_max_pool',
-                        action='store_true',
-                        help='If true, the max pooling after conv1 is removed.')
+    parser.add_argument(
+        '--no_max_pool',
+        action='store_true',
+        help='If true, the max pooling after conv1 is removed.')
     parser.add_argument('--resnet_shortcut',
                         default='B',
                         type=str,
@@ -243,7 +254,8 @@ def parse_opts():
         '--resnet_widen_factor',
         default=1.0,
         type=float,
-        help='The number of feature maps of resnet is multiplied by this value')
+        help='The number of feature maps of resnet is multiplied by this value'
+    )
     parser.add_argument('--wide_resnet_k',
                         default=2,
                         type=int,
@@ -288,6 +300,4 @@ def parse_opts():
                         type=int,
                         help='number of nodes for distributed training')
 
-    args = parser.parse_args()
-
-    return args
+    return parser
