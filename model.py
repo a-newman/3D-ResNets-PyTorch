@@ -1,15 +1,18 @@
 import torch
 from torch import nn
 
-from models import resnet, resnet2p1d, pre_act_resnet, wide_resnet, resnext, densenet
+from .models import (densenet, pre_act_resnet, resnet, resnet2p1d, resnext,
+                     wide_resnet)
 
 
 def get_module_name(name):
     name = name.split('.')
+
     if name[0] == 'module':
         i = 1
     else:
         i = 0
+
     if name[i] == 'features':
         i += 1
 
@@ -22,6 +25,7 @@ def get_fine_tuning_parameters(model, ft_begin_module):
 
     parameters = []
     add_flag = False
+
     for k, v in model.named_parameters():
         if ft_begin_module == get_module_name(k):
             add_flag = True
@@ -34,7 +38,8 @@ def get_fine_tuning_parameters(model, ft_begin_module):
 
 def generate_model(opt):
     assert opt.model in [
-        'resnet', 'resnet2p1d', 'preresnet', 'wideresnet', 'resnext', 'densenet'
+        'resnet', 'resnet2p1d', 'preresnet', 'wideresnet', 'resnext',
+        'densenet'
     ]
 
     if opt.model == 'resnet':
@@ -47,14 +52,15 @@ def generate_model(opt):
                                       no_max_pool=opt.no_max_pool,
                                       widen_factor=opt.resnet_widen_factor)
     elif opt.model == 'resnet2p1d':
-        model = resnet2p1d.generate_model(model_depth=opt.model_depth,
-                                          n_classes=opt.n_classes,
-                                          n_input_channels=opt.n_input_channels,
-                                          shortcut_type=opt.resnet_shortcut,
-                                          conv1_t_size=opt.conv1_t_size,
-                                          conv1_t_stride=opt.conv1_t_stride,
-                                          no_max_pool=opt.no_max_pool,
-                                          widen_factor=opt.resnet_widen_factor)
+        model = resnet2p1d.generate_model(
+            model_depth=opt.model_depth,
+            n_classes=opt.n_classes,
+            n_input_channels=opt.n_input_channels,
+            shortcut_type=opt.resnet_shortcut,
+            conv1_t_size=opt.conv1_t_size,
+            conv1_t_stride=opt.conv1_t_stride,
+            no_max_pool=opt.no_max_pool,
+            widen_factor=opt.resnet_widen_factor)
     elif opt.model == 'wideresnet':
         model = wide_resnet.generate_model(
             model_depth=opt.model_depth,
@@ -94,13 +100,16 @@ def generate_model(opt):
     return model
 
 
-def load_pretrained_model(model, pretrain_path, model_name, n_finetune_classes):
+def load_pretrained_model(model, pretrain_path, model_name,
+                          n_finetune_classes):
+
     if pretrain_path:
         print('loading pretrained model {}'.format(pretrain_path))
         pretrain = torch.load(pretrain_path, map_location='cpu')
 
         model.load_state_dict(pretrain['state_dict'])
         tmp_model = model
+
         if model_name == 'densenet':
             tmp_model.classifier = nn.Linear(tmp_model.classifier.in_features,
                                              n_finetune_classes)

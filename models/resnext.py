@@ -5,8 +5,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .resnet import conv1x1x1, Bottleneck, ResNet
-from utils import partialclass
+from ..utils import partialclass
+from .resnet import Bottleneck, ResNet, conv1x1x1
 
 
 def get_inplanes():
@@ -16,7 +16,11 @@ def get_inplanes():
 class ResNeXtBottleneck(Bottleneck):
     expansion = 2
 
-    def __init__(self, inplanes, planes, cardinality, stride=1,
+    def __init__(self,
+                 inplanes,
+                 planes,
+                 cardinality,
+                 stride=1,
                  downsample=None):
         super().__init__(inplanes, planes, stride, downsample)
 
@@ -35,7 +39,6 @@ class ResNeXtBottleneck(Bottleneck):
 
 
 class ResNeXt(ResNet):
-
     def __init__(self,
                  block,
                  layers,
